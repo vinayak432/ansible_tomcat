@@ -1,19 +1,11 @@
 pipeline {
-    agent { label 'ansible' }
+    agent any
 
     stages {
-        stage('Checkout') {
-            steps {
-                git 'https://github.com/vinayak432/ansible_tomcat.git'
-            }
-        }
-
         stage('Run Ansible Playbook') {
             steps {
                 sh '''
-                  ansible-playbook \
-                  -i inventory \
-                  run_tom.yml
+                  ansible-playbook run_tom.yml
                 '''
             }
         }
