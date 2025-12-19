@@ -6,9 +6,17 @@
     "java --version"
 
 - name: install java
-  shell: |
-    apt-get update
-    apt-get install -y openjdk-17-jdk
+  apt:
+    name: openjdk-17-jdk
+    state: present
+    update_cache: yes
+  become: true
+
+
+#- name: install java
+ # shell: |
+  #  apt-get update
+   # apt-get install -y openjdk-17-jdk
 
 - name: verify java installation
   shell: |
