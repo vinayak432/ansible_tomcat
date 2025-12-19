@@ -1,0 +1,15 @@
+
+pipeline {
+    agent { label 'ansible' }
+
+    stages {
+
+        stage('Checkout') {
+            steps { git 'https://github.com/vinayak432/ansible_tomcat.git' }
+        }
+
+        stage('Build') {
+            steps { sh 'ansible-playbook run_tom.yml' }
+        }
+   }
+}       
