@@ -1,5 +1,9 @@
 ---
-- name: roles
+- name: Configure Tomcat
   hosts: servers_grp1
+  become: true
+  become_method: sudo
+
   roles:
     - tomacat_config
+
