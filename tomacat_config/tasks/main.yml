@@ -47,7 +47,7 @@
     tar -xvzf apache-tomcat-11.0.15.tar.gz  
 
 - name: set permissions
-  run: |
+  shell: |
     sudo chmod 755 /opt/apache-tomcat-11.0.15/bin/*.sh
     sudo chown -R tomcat:tomcat /opt/apache-tomcat-11.0.15
     systemctl daemon-reload
