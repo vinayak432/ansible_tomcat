@@ -7,10 +7,11 @@
 
 - name: install java
   apt:
-    name: openjdk-17-jdk
+    name: openjdk-21-jdk
     state: present
     update_cache: yes
   become: true
+
 
 
 #- name: install java
