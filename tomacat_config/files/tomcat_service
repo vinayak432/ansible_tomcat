@@ -6,8 +6,8 @@ After=network.target
 Type=forking
 User=tomcat
 Group=tomcat
-ExecStart=/opt/apache-tomcat-9.0.104/bin/startup.sh
-ExecStop=/opt/apache-tomcat-9.0.104/bin/shutdown.sh
+ExecStart=/opt/apache-tomcat*/bin/startup.sh
+ExecStop=/opt/apache-tomcat*/bin/shutdown.sh
 Restart=always
 
 [Install]
