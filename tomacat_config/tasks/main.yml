@@ -1,60 +1,64 @@
 ---
-# tasks file for tomacat_config
+# tasks file for tomcat_config
 
-- name: checking the dependency - java
-  shell:
-    "java --version"
-
-- name: install java
+- name: Install Java 21
   apt:
     name: openjdk-21-jdk
     state: present
     update_cache: yes
   become: true
 
-
-
-#- name: install java
- # shell: |
-  #  apt-get update
-   # apt-get install -y openjdk-17-jdk
-
-- name: verify java installation
-  shell: |
-    java -version  
-
-- name: Add group "{{ tomcat_group }}"
+- name: Create tomcat group
   group:
-    name: "{{ tomcat_group }}"
+    name: tomcat
     state: present
+  become: true
 
-- name: Add user "{{ tomcat_user }}" and assign to group
+- name: Create tomcat user
   user:
-    name: "{{ tomcat_user }}"
-    group: "{{ tomcat_group }}"
+    name: tomcat
+    group: tomcat
     create_home: yes
+    shell: /bin/bash
     state: present
+  become: true
 
+- name: Download Tomcat 11
+  get_url:
+    url: https://dlcdn.apache.org/tomcat/tomcat-11/v11.0.15/bin/apache-tomcat-11.0.15.tar.gz
+    dest: /opt/apache-tomcat-11.0.15.tar.gz
+  become: true
 
-- name: Downloading tomcat 11
-  shell: |
-    cd /opt
-    wget https://dlcdn.apache.org/tomcat/tomcat-11/v11.0.15/bin/apache-tomcat-11.0.15.tar.gz
+- name: Extract Tomcat (only once)
+  unarchive:
+    src: /opt/apache-tomcat-11.0.15.tar.gz
+    dest: /opt
+    remote_src: yes
+    creates: /opt/apache-tomcat-11.0.15
+  become: true
 
-- name: extract tomcat
-  shell: |
-    cd /opt
-    tar -xvzf apache-tomcat-11.0.15.tar.gz  
+- name: Set Tomcat ownership
+  file:
+    path: /opt/apache-tomcat-11.0.15
+    owner: tomcat
+    group: tomcat
+    recurse: yes
+  become: true
 
-- name: set permissions
-  shell: |
-    sudo chmod 755 /opt/apache-tomcat-11.0.15/bin/*.sh
-    sudo chown -R tomcat:tomcat /opt/apache-tomcat-11.0.15
-    systemctl daemon-reload
-    systemctl restart tomcat
-   
-- name: start tomcat server
-  shell: |
-   cd /opt/apache-tomcat-11.0.15/bin
-   chmod +x *.sh
-   ./startup.sh
+- name: Ensure Tomcat scripts are executable
+  file:
+    path: /opt/apache-tomcat-11.0.15/bin
+    mode: '0755'
+    recurse: yes
+  become: true
+
+- name: Reload systemd
+  command: systemctl daemon-reload
+  become: true
+
+- name: Start and enable Tomcat
+  service:
+    name: tomcat
+    state: started
+    enabled: yes
+  become: true
